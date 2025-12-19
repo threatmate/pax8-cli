@@ -43,6 +43,7 @@ type APICommand struct {
 	Endpoint string `arg:"--endpoint,required" help:"API endpoint to call"`
 	Method   string `arg:"--method" default:"GET" help:"HTTP method to use"`
 	Body     string `arg:"--body" help:"Request body for POST/PUT methods"`
+	Audience string `arg:"--audience" default:"https://api.pax8.com" help:"Audience to use: https://api.pax8.com, api://provisioning, api://usage"`
 }
 
 type Config struct {
@@ -172,7 +173,7 @@ func main() {
 		clientRequest := pax8.ClientRequest{
 			Endpoint: args.API.Endpoint,
 			Method:   strings.ToUpper(args.API.Method),
-			Audience: pax8.AudienceProvisioning,
+			Audience: args.API.Audience,
 			Input:    jsonRequest,
 			Output:   &jsonResponse,
 		}
