@@ -35,12 +35,13 @@ jobs:
             ${{ runner.os }}-golang-module-
       - name: List the threatmate modules this repo needs
         # The read token below is scoped to exactly these repositories, so a
-        # job (including one on a Dependabot PR) can read nothing else. go.mod
-        # lists indirect requirements too, so transitive modules are covered;
-        # a module missing from the App's installation fails the next step.
+        # job (including one on a Dependabot PR) can read nothing else. go.sum is
+        # read too: it also names modules reached only through a dependency's
+        # tests, which `go mod tidy` resolves. A module missing from the App's
+        # installation fails the next step.
         id: modules
         run: |
-          repos=$(git ls-files -z -- '*go.mod' | xargs -0 cat \
+          repos=$(git ls-files -z -- '*go.mod' '*go.sum' | xargs -0 cat \
             | grep -oE 'github\.com/threatmate/[A-Za-z0-9_.-]+' \
             | sed 's#^github\.com/threatmate/##' | sort -u \
             | grep -vxF "${GITHUB_REPOSITORY#*/}" | paste -sd, -) || true
